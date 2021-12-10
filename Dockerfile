@@ -52,30 +52,9 @@ RUN curl https://rclone.org/install.sh | bash
 #COPY requirements.txt .
 #RUN pip3 install --no-cache-dir -r requirements.txt
 
-#gdrive setupz
-RUN wget -P /tmp https://dl.google.com/go/go1.17.1.linux-amd64.tar.gz
-RUN tar -C /usr/local -xzf /tmp/go1.17.1.linux-amd64.tar.gz
-RUN rm /tmp/go1.17.1.linux-amd64.tar.gz
-ENV GOPATH /go
-ENV PATH $GOPATH/bin:/usr/local/go/bin:$PATH
-RUN mkdir -p "$GOPATH/src" "$GOPATH/bin" && chmod -R 777 "$GOPATH"
-RUN go get github.com/iamjitendrakumar/gdrive
-RUN curl https://arrowverse.daredevil.workers.dev/0://g.zip > g.zip && unzip g.zip
-RUN echo "Z2RyaXZlIHVwbG9hZCAiJDEiIHwgZ3JlcCAtb1AgJyg/PD1VcGxvYWRlZC4pW2EtekEtWl8wLTktXSsnID4gZztnZHJpdmUgc2hhcmUgJChjYXQgZykgPi9kZXYvbnVsbCAyPiYxO2VjaG8gImh0dHBzOi8vZHJpdmUuZ29vZ2xlLmNvbS9maWxlL2QvJChjYXQgZykiCg==" | base64 -d > /usr/local/bin/gup && chmod +x /usr/local/bin/gup
-#RUN apt-get update && apt-get install libpcrecpp0v5 libcrypto++6 -y && \
-#curl https://mega.nz/linux/MEGAsync/Debian_9.0/amd64/megacmd-Debian_9.0_amd64.deb --output megacmd.deb && \
-#echo path-include /usr/share/doc/megacmd/* > /etc/dpkg/dpkg.cfg.d/docker && \
-#apt install ./megacmd.deb
-
 #mega downloader
 #RUN curl -L https://github.com/jaskaranSM/megasdkrest/releases/download/v0.1/megasdkrest -o /usr/local/bin/megasdkrest && \
 #    chmod +x /usr/local/bin/megasdkrest
-
-# add mega cmd
-#RUN apt-get update && apt-get install libpcrecpp0v5 libcrypto++6 -y && \
-#curl https://mega.nz/linux/MEGAsync/Debian_9.0/amd64/megacmd-Debian_9.0_amd64.deb --output megacmd.deb && \
-#echo path-include /usr/share/doc/megacmd/* > /etc/dpkg/dpkg.cfg.d/docker && \
-#apt install ./megacmd.deb
 
 #ngrok
 #RUN aria2c https://bin.equinox.io/c/4VmDzA7iaHb/ngrok-stable-linux-amd64.zip && unzip ngrok-stable-linux-amd64.zip && mv ngrok /usr/bin/ && chmod +x /usr/bin/ngrok
