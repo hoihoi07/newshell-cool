@@ -98,6 +98,9 @@ RUN pip3 install --no-cache-dir -r requirements.txt
 RUN curl -sL https://deb.nodesource.com/setup_14.x | sh
 RUN apt-get install -y nodejs
 RUN npm install
+RUN pip install transfersh-cli
+RUN npm install -g skynet-cli
+RUN npm install -g bayfiles-cli
 CMD node server
 # setup workdir
 #COPY default.conf.template /etc/nginx/conf.d/default.conf.template
