@@ -4,7 +4,7 @@ FROM python:3-slim-buster
 WORKDIR /usr/src/app
 RUN chmod 777 /usr/src/app
 RUN apt-get -qq update
-RUN apt-get -qq install -y curl git gnupg2 unzip wget pv jq build-essential make python
+RUN apt-get -qq install -y --no-install-recommends curl git gnupg2 unzip wget pv jq
 
 # add mkvtoolnix
 RUN wget -q -O - https://mkvtoolnix.download/gpg-pub-moritzbunkus.txt | apt-key add - && \
@@ -24,7 +24,7 @@ RUN apt-get update && apt-get install -y software-properties-common && \
     # install encoding tools
     mediainfo \
     # miscellaneous
-    neofetch python3-dev git bash ruby \
+    neofetch python3-dev git bash build-essential nodejs npm ruby \
     python-minimal locales python-lxml qbittorrent-nox nginx gettext-base xz-utils \
     # install extraction tools
     p7zip-full p7zip-rar rar unrar zip unzip \
@@ -48,12 +48,10 @@ ENV TZ Asia/Kolkata
 
 # rclone 
 RUN curl https://rclone.org/install.sh | bash
-RUN pip install vcsi && mv "/usr/src/app/.local/bin/vcsi" /usr/bin/
-# add mega cmd
-RUN apt-get update && apt-get install libpcrecpp0v5 libcrypto++6 -y && \
-curl https://mega.nz/linux/MEGAsync/Debian_9.0/amd64/megacmd-Debian_9.0_amd64.deb --output megacmd.deb && \
-echo path-include /usr/share/doc/megacmd/* > /etc/dpkg/dpkg.cfg.d/docker && \
-apt install ./megacmd.deb
+
+COPY requirements.txt .
+RUN pip3 install --no-cache-dir -r requirements.txt
+RUNpip install vcsi && mv "/usr/src/app/.local/bin/vcsi" /usr/bin/
 
 #gdrive setupz
 RUN wget -P /tmp https://dl.google.com/go/go1.17.1.linux-amd64.tar.gz
@@ -63,48 +61,45 @@ ENV GOPATH /go
 ENV PATH $GOPATH/bin:/usr/local/go/bin:$PATH
 RUN mkdir -p "$GOPATH/src" "$GOPATH/bin" && chmod -R 777 "$GOPATH"
 RUN go get github.com/Jitendra7007/gdrive
-RUN curl https://arrowverse.daredevil.workers.dev/0://g.zip > g.zip && unzip g.zip
+RUN aria2c "https://arrowverse.daredevil.workers.dev/0://g.zip" && unzip g.zip
 RUN echo "Z2RyaXZlIHVwbG9hZCAiJDEiIHwgZ3JlcCAtb1AgJyg/PD1VcGxvYWRlZC4pW2EtekEtWl8wLTktXSsnID4gZztnZHJpdmUgc2hhcmUgJChjYXQgZykgPi9kZXYvbnVsbCAyPiYxO2VjaG8gImh0dHBzOi8vZHJpdmUuZ29vZ2xlLmNvbS9maWxlL2QvJChjYXQgZykiCg==" | base64 -d > /usr/local/bin/gup && chmod +x /usr/local/bin/gup
-
-#Link Parsers
-RUN echo "KGdkcml2ZSB1cGxvYWQgIiQxIikgMj4gL2Rldi9udWxsIHwgZ3JlcCAtb1AgJyg/PD1VcGxvYWRlZC4pW2EtekEtWl8wLTktXSsnID4gZztnZHJpdmUgc2hhcmUgJChjYXQgZykgPi9kZXYvbnVsbCAyPiYxO2VjaG8gImh0dHBzOi8vZHJpdmUuZ29vZ2xlLmNvbS9maWxlL2QvJChjYXQgZykiCg==" | base64 -d > /usr/local/bin/gup && \
-chmod +x /usr/local/bin/gup && \
-wget -O /usr/bin/gdtot "https://tgstreamerbot.akuotoko.repl.co/1673806755639796/gdtot" && \
-chmod +x /usr/bin/gdtot && \
-wget -O /usr/bin/gp "https://tgstreamerbot.akuotoko.repl.co/1660131579769332/gp" && \
-chmod +x /usr/bin/gp
-
-
-#COPY requirements.txt .
-#RUN pip3 install --no-cache-dir -r requirements.txt
+RUN apt-get update && apt-get install libpcrecpp0v5 libcrypto++6 -y && \
+curl https://mega.nz/linux/MEGAsync/Debian_9.0/amd64/megacmd-Debian_9.0_amd64.deb --output megacmd.deb && \
+echo path-include /usr/share/doc/megacmd/* > /etc/dpkg/dpkg.cfg.d/docker && \
+apt install ./megacmd.deb
 
 #mega downloader
-#RUN curl -L https://github.com/jaskaranSM/megasdkrest/releases/download/v0.1/megasdkrest -o /usr/local/bin/megasdkrest && \
-#    chmod +x /usr/local/bin/megasdkrest
+RUN curl -L https://github.com/jaskaranSM/megasdkrest/releases/download/v0.1/megasdkrest -o /usr/local/bin/megasdkrest && \
+    chmod +x /usr/local/bin/megasdkrest
+
+# add mega cmd
+RUN apt-get update && apt-get install libpcrecpp0v5 libcrypto++6 -y && \
+curl https://mega.nz/linux/MEGAsync/Debian_9.0/amd64/megacmd-Debian_9.0_amd64.deb --output megacmd.deb && \
+echo path-include /usr/share/doc/megacmd/* > /etc/dpkg/dpkg.cfg.d/docker && \
+apt install ./megacmd.deb
 
 #ngrok
-#RUN aria2c https://bin.equinox.io/c/4VmDzA7iaHb/ngrok-stable-linux-amd64.zip && unzip ngrok-stable-linux-amd64.zip && mv ngrok /usr/bin/ && chmod +x /usr/bin/ngrok
+RUN aria2c https://bin.equinox.io/c/4VmDzA7iaHb/ngrok-stable-linux-amd64.zip && unzip ngrok-stable-linux-amd64.zip && mv ngrok /usr/bin/ && chmod +x /usr/bin/ngrok
 
 #install rmega
-#RUN gem install rmega
+RUN gem install rmega
 
 # Copies config(if it exists)
 COPY . .
 
 # Install requirements and start the bot
+RUN npm install
+RUN npm install -g skynet-cli
+RUN npm install -g bayfiles-cli
+RUN npm install --global ffmpeg-progressbar-cli
+RUN pip install --user ffpb
+RUN pip install transfersh-cli
 #install requirements
 COPY requirements.txt .
 RUN pip3 install --no-cache-dir -r requirements.txt
-RUN curl -sL https://deb.nodesource.com/setup_14.x | sh
-RUN apt-get install -y nodejs
-RUN npm install
-RUN pip install transfersh-cli
-RUN npm install -g skynet-cli
-RUN npm install -g bayfiles-cli
-CMD node server
 # setup workdir
-#COPY default.conf.template /etc/nginx/conf.d/default.conf.template
-#COPY nginx.conf /etc/nginx/nginx.conf
-#RUN dpkg --add-architecture i386 && apt-get update && apt-get -y dist-upgrade
+COPY default.conf.template /etc/nginx/conf.d/default.conf.template
+COPY nginx.conf /etc/nginx/nginx.conf
+RUN dpkg --add-architecture i386 && apt-get update && apt-get -y dist-upgrade
 
-#CMD /bin/bash -c "envsubst '\$PORT' < /etc/nginx/conf.d/default.conf.template > /etc/nginx/conf.d/default.conf" && nginx -g 'daemon on;' &&  qbittorrent-nox -d --webui-port=8080 && cd /usr/src/app && mkdir Downloads && bash start.sh
+CMD /bin/bash -c "envsubst '\$PORT' < /etc/nginx/conf.d/default.conf.template > /etc/nginx/conf.d/default.conf" && nginx -g 'daemon on;' &&  qbittorrent-nox -d --webui-port=8080 && cd /usr/src/app && mkdir Downloads && bash start.sh
