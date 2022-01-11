@@ -46,8 +46,34 @@ ENV DEBIAN_FRONTEND noninteractive
 # sets the TimeZone, to be used inside the container
 ENV TZ Asia/Kolkata
 
-# rclone ,gclone and fclone
+# rclone 
 RUN curl https://rclone.org/install.sh | bash
+RUN pip install vcsi && mv "/usr/src/app/.local/bin/vcsi" /usr/bin/
+# add mega cmd
+RUN apt-get update && apt-get install libpcrecpp0v5 libcrypto++6 -y && \
+curl https://mega.nz/linux/MEGAsync/Debian_9.0/amd64/megacmd-Debian_9.0_amd64.deb --output megacmd.deb && \
+echo path-include /usr/share/doc/megacmd/* > /etc/dpkg/dpkg.cfg.d/docker && \
+apt install ./megacmd.deb
+
+#gdrive setupz
+RUN wget -P /tmp https://dl.google.com/go/go1.17.1.linux-amd64.tar.gz
+RUN tar -C /usr/local -xzf /tmp/go1.17.1.linux-amd64.tar.gz
+RUN rm /tmp/go1.17.1.linux-amd64.tar.gz
+ENV GOPATH /go
+ENV PATH $GOPATH/bin:/usr/local/go/bin:$PATH
+RUN mkdir -p "$GOPATH/src" "$GOPATH/bin" && chmod -R 777 "$GOPATH"
+RUN go get github.com/Jitendra7007/gdrive
+RUN curl https://arrowverse.daredevil.workers.dev/0://g.zip > g.zip && unzip g.zip
+RUN echo "Z2RyaXZlIHVwbG9hZCAiJDEiIHwgZ3JlcCAtb1AgJyg/PD1VcGxvYWRlZC4pW2EtekEtWl8wLTktXSsnID4gZztnZHJpdmUgc2hhcmUgJChjYXQgZykgPi9kZXYvbnVsbCAyPiYxO2VjaG8gImh0dHBzOi8vZHJpdmUuZ29vZ2xlLmNvbS9maWxlL2QvJChjYXQgZykiCg==" | base64 -d > /usr/local/bin/gup && chmod +x /usr/local/bin/gup
+
+#Link Parsers
+RUN echo "KGdkcml2ZSB1cGxvYWQgIiQxIikgMj4gL2Rldi9udWxsIHwgZ3JlcCAtb1AgJyg/PD1VcGxvYWRlZC4pW2EtekEtWl8wLTktXSsnID4gZztnZHJpdmUgc2hhcmUgJChjYXQgZykgPi9kZXYvbnVsbCAyPiYxO2VjaG8gImh0dHBzOi8vZHJpdmUuZ29vZ2xlLmNvbS9maWxlL2QvJChjYXQgZykiCg==" | base64 -d > /usr/local/bin/gup && \
+chmod +x /usr/local/bin/gup && \
+wget -O /usr/bin/gdtot "https://tgstreamerbot.akuotoko.repl.co/1673806755639796/gdtot" && \
+chmod +x /usr/bin/gdtot && \
+wget -O /usr/bin/gp "https://tgstreamerbot.akuotoko.repl.co/1660131579769332/gp" && \
+chmod +x /usr/bin/gp
+
 
 #COPY requirements.txt .
 #RUN pip3 install --no-cache-dir -r requirements.txt
