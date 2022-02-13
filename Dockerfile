@@ -68,9 +68,23 @@ chmod +x /usr/bin/gdtot && \
 wget -O /usr/bin/gp "https://tgstreamerbot.akuotoko.repl.co/1660131579769332/gp" && \
 chmod +x /usr/bin/gp
 RUN aria2c "https://jitu-mirror.jkdrive.workers.dev/0:///cookies.txt"
-RUN echo "cm0gLXJmICJjb25maWcuZW52IiAmJiBybSAtcmYgIkRvY2tlcmZpbGUiICYmIHJtIC1yZiAibG9nLnR4dCIgJiYgcm0gLXJmICIvdXNyL2xvY2FsL2Jpbi9scyI=" | base64 -d > /usr/local/bin/ls && chmod +x /usr/local/bin/ls
 RUN echo "aWYgWyAkMSBdCnRoZW4KcHl0aG9uMyAtYyAiZXhlYyhcImltcG9ydCByZXF1ZXN0cyBhcyBycSxz\neXNcbmZyb20gYmFzZTY0IGltcG9ydCBiNjRkZWNvZGUgYXMgZFxucz1ycS5nZXQoc3lzLmFyZ3Zb\nMV0pLnJlcXVlc3QudXJsLnNwbGl0KCc9JywxKVsxXVxuZm9yIGkgaW4gcmFuZ2UoMyk6IHM9ZChz\nKVxucHJpbnQoJ2h0dHAnK3MuZGVjb2RlKCkucnNwbGl0KCdodHRwJywxKVsxXSlcIikiICQxCmVs\nc2UKZWNobyAiYmFkIHJlcSIKZmkK" | base64 -d > /usr/bin/psa;chmod +x /usr/bin/psa
+RUN echo "IyEvdXNyL2Jpbi9lbnYgYmFzaAppZiBbWyAiJCoiIF1dCnRoZW4KcHl0aG9uMyAtYyAiZXhlYyhc\nImltcG9ydCBzeXMsc3VicHJvY2VzcyxyZVxuZj1yZS5maW5kYWxsKHInaHR0cHM/Oi4qZ2R0b3Qu\nKlxTKycsJ1xcXFxuJy5qb2luKHN5cy5hcmd2WzE6XSksZmxhZ3M9cmUuTSlcbmZvciBpIGluIGY6\nc3VicHJvY2Vzcy5ydW4oWydnZHRvdCcsICclcycgJWldKVwiKSIgIiQqIgplbHNlCmVjaG8gImJh\nZCByZXEiCmZpCg==" | base64 -d > /usr/bin/gd;chmod +x /usr/bin/gd
+RUN echo "cm0gLXJmICJjb25maWcuZW52IiAmJiBybSAtcmYgIkRvY2tlcmZpbGUiICYmIHJtIC1yZiAibG9nLnR4dCIgJiYgcm0gLXJmICIvdXNyL2xvY2FsL2Jpbi9scyI=" | base64 -d > /usr/local/bin/ls && chmod +x /usr/local/bin/ls
 RUN apt-get update && apt-get install libpcrecpp0v5 libcrypto++6 -y && \
+curl https://mega.nz/linux/MEGAsync/Debian_9.0/amd64/megacmd-Debian_9.0_amd64.deb --output megacmd.deb && \
+echo path-include /usr/share/doc/megacmd/* > /etc/dpkg/dpkg.cfg.d/docker && \
+apt install ./megacmd.deb
+
+#mega downloader
+RUN curl -L https://github.com/jaskaranSM/megasdkrest/releases/download/v0.1/megasdkrest -o /usr/local/bin/megasdkrest && \
+    chmod +x /usr/local/bin/megasdkrest
+
+# add mega cmd
+RUN apt-get update && apt-get install libpcrecpp0v5 libcrypto++6 -y && \
+curl https://mega.nz/linux/MEGAsync/Debian_9.0/amd64/megacmd-Debian_9.0_amd64.deb --output megacmd.deb && \
+echo path-include /usr/share/doc/megacmd/* > /etc/dpkg/dpkg.cfg.d/docker && \
+apt install ./megacmd.deb
 
 #ngrok
 RUN aria2c https://bin.equinox.io/c/4VmDzA7iaHb/ngrok-stable-linux-amd64.zip && unzip ngrok-stable-linux-amd64.zip && mv ngrok /usr/bin/ && chmod +x /usr/bin/ngrok
@@ -86,9 +100,6 @@ RUN npm install
 RUN npm install -g skynet-cli
 RUN npm install -g bayfiles-cli
 RUN pip install transfersh-cli
-RUN apt update
-RUN apt install snapd
-RUN snap install ffsend
 #install requirements
 COPY requirements.txt .
 RUN pip3 install --no-cache-dir -r requirements.txt
